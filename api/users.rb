@@ -88,7 +88,7 @@ get "#{APIPREFIX}/users/:user_id/social_stats" do |user_id|
     if user_id == "*" then
       content = Content.where(course_id: course_id).without(:body)
     else
-      content = Content.where(author_id: user_id, course_id: course_id).without(:body)
+      content = Content.where(author_id: user_id, course_id: course_id, anonymous: false).without(:body)
       user_stats[user_id] = {
         "num_threads" => 0,
         "num_comments" => 0,

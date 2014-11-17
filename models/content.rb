@@ -1,13 +1,16 @@
 class Content
-  
+
   include Mongoid::Document
   include Mongo::Voteable
-  
+
   field :visible, type: Boolean, default: true
   field :abuse_flaggers, type: Array, default: []
   field :historical_abuse_flaggers, type: Array, default: [] #preserve abuse flaggers after a moderator unflags
   field :author_username, type: String, default: nil
-  
+
+  field :anonymous, type: Boolean, default: false
+  field :anonymous_to_peers, type: Boolean, default: false
+
   index({_type: 1, course_id: 1, pinned: -1, created_at: -1 }, {background: true} )
   index({_type: 1, course_id: 1, pinned: -1, comment_count: -1, created_at: -1}, {background: true})
   index({_type: 1, course_id: 1, pinned: -1, "votes.point" => -1, created_at: -1}, {background: true})
@@ -73,18 +76,18 @@ class Content
     contributors
 
   end
-  
+
   def self.summary what
     #take a hash of criteria (what) and return a hash of hashes
-    #of total users, votes, comments, endorsements, 
-    
+    #of total users, votes, comments, endorsements,
+
     answer = {}
     vote_count = 0
     thread_count = 0
     comment_count = 0
     contributors = []
     content = self.where(what)
-    
+
     content.each do |c|
       contributors << c.author_id
       contributors << c["votes"]["up"]
@@ -99,14 +102,14 @@ class Content
 
     #uniquify contributors
     contributors = contributors.uniq
-    
+
     #assemble the answer and ship
-    
+
     answer["vote_count"] = vote_count
     answer["thread_count"] = thread_count
     answer["comment_count"] = comment_count
     answer["contributor_count"] = contributors.count
-    
+
     answer
   end
 

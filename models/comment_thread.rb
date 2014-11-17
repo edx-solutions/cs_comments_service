@@ -13,8 +13,6 @@ class CommentThread < Content
   field :body, type: String
   field :course_id, type: String
   field :commentable_id, type: String
-  field :anonymous, type: Boolean, default: false
-  field :anonymous_to_peers, type: Boolean, default: false
   field :closed, type: Boolean, default: false
   field :at_position_list, type: Array, default: []
   field :last_activity_at, type: Time
@@ -125,9 +123,9 @@ class CommentThread < Content
     #  username
     #    from doc.author_username
     #  votes
-    #    from subdocument votes - {count, up_count, down_count, point}  
+    #    from subdocument votes - {count, up_count, down_count, point}
     #  abuse_flaggers
-    #    from original document 
+    #    from original document
     #  tags
     #    deprecated - empty array
     #  type
@@ -149,14 +147,14 @@ class CommentThread < Content
                             "group_id" => group_id,
                             "pinned" => pinned?,
                             "comments_count" => comment_count)
-    
+
   end
 
   def comment_thread_id
     #so that we can use the comment thread id as a common attribute for flagging
     self.id
-  end  
-  
+  end
+
 private
 
   def set_last_activity_at

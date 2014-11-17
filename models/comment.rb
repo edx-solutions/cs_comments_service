@@ -5,25 +5,23 @@ class Comment < Content
   include Mongoid::Tree
   include Mongoid::Timestamps
   include Mongoid::MagicCounterCache
-  
+
   voteable self, :up => +1, :down => -1
 
   field :course_id, type: String
   field :body, type: String
   field :endorsed, type: Boolean, default: false
-  field :anonymous, type: Boolean, default: false
-  field :anonymous_to_peers, type: Boolean, default: false
   field :at_position_list, type: Array, default: []
 
   index({author_id: 1, course_id: 1})
   index({_type: 1, comment_thread_id: 1, author_id: 1, updated_at: 1})
 
   field :sk, type: String, default: nil
-  before_save :set_sk  
+  before_save :set_sk
   def set_sk()
     # this attribute is explicitly write-once
     if self.sk.nil?
-      self.sk = (self.parent_ids.dup << self.id).join("-") 
+      self.sk = (self.parent_ids.dup << self.id).join("-")
     end
   end
 
@@ -41,7 +39,7 @@ class Comment < Content
     indexes :created_at, type: :date, included_in_all: false
     indexes :updated_at, type: :date, included_in_all: false
   end
-  
+
 
   belongs_to :comment_thread, index: true
   belongs_to :author, class_name: "User", index: true
@@ -97,7 +95,7 @@ class Comment < Content
       as_document.slice(*%w[body course_id endorsed anonymous anonymous_to_peers created_at updated_at at_position_list])
                  .merge("id" => _id)
                  .merge("user_id" => author_id)
-                 .merge("username" => author_username) 
+                 .merge("username" => author_username)
                  .merge("depth" => depth)
                  .merge("closed" => comment_thread.nil? ? false : comment_thread.closed) # ditto
                  .merge("thread_id" => comment_thread_id)
@@ -107,7 +105,7 @@ class Comment < Content
                  .merge("type" => "comment")
     end
   end
-  
+
   def commentable_id
     #we need this to have a universal access point for the flag rake task
     if self.comment_thread_id
@@ -137,7 +135,7 @@ class Comment < Content
      self.where(:created_at.gte => (from_when)).where(:created_at.lte => (to_when)).
        where(:comment_thread_id.in => thread_ids)
   end
-  
+
 private
 
   def set_thread_last_activity_at
