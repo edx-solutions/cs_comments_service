@@ -29,6 +29,5 @@ benchmark_log
 log/
 #redcar
 .redcar/
-.idea/
 /nbproject
 .idea/

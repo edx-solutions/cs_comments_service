@@ -1,9 +1,9 @@
 common: &default_client
   options:
     write:
-      w: 1
+      w: <%= ENV['MONGOID_WRITE_MODE'] || 1 %>
     read:
-      mode: :primary
+      mode: :<%= ENV['MONGOID_READ_MODE'] || 'primary' %>
     max_retries: <%= ENV['MONGOID_MAX_RETRIES'] || 1 %>
     retry_interval: <%= ENV['MONGOID_RETRY_INTERVAL'] || 0 %>
     timeout: <%= ENV['MONGOID_TIMEOUT'] || 0.5 %>
@@ -24,9 +24,7 @@ test:
   clients:
     default:
       <<: *default_client
-      database: cs_comments_service_test
-      hosts:
-        - localhost:27017
+      <<: *default_uri
 
 production:
   clients:

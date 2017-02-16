@@ -1,7 +1,6 @@
 require 'new_relic/agent/method_tracer'
 
 helpers do
-
   def commentable
     @commentable ||= Commentable.find(params[:commentable_id])
   end
@@ -79,7 +78,6 @@ helpers do
     obj.reload.to_hash.to_json
   end
 
-
   def pin(obj)
     raise ArgumentError, t(:user_id_is_required) unless user
     obj.pinned = true
@@ -94,14 +92,16 @@ helpers do
     obj.reload.to_hash.to_json
   end
 
-
-
   def value_to_boolean(value)
     !!(value.to_s =~ /^true$/i)
   end
 
   def bool_recursive
     value_to_boolean params["recursive"]
+  end
+
+  def bool_with_responses
+    value_to_boolean params["with_responses"] || "true"
   end
 
   def bool_mark_as_read
@@ -137,12 +137,10 @@ helpers do
     filter_unread,
     filter_unanswered,
     sort_key,
-    sort_order,
     page,
     per_page,
     context=:course
   )
-
     context_threads = comment_threads.where({:context => context})
 
     if not group_ids.empty?
@@ -176,7 +174,7 @@ helpers do
       end
     end
 
-    sort_criteria = get_sort_criteria(sort_key, sort_order)
+    sort_criteria = get_sort_criteria(sort_key)
     if not sort_criteria
       {}
     else
@@ -241,7 +239,7 @@ helpers do
 
   # Given query params, return sort criteria appropriate for passing to the
   # order_by function of a Mongoid query. Returns nil if params are not valid.
-  def get_sort_criteria(sort_key, sort_order)
+  def get_sort_criteria(sort_key)
     sort_key_mapper = {
       "date" => :created_at,
       "activity" => :last_activity_at,
@@ -249,16 +247,11 @@ helpers do
       "comments" => :comment_count,
     }
 
-    sort_order_mapper = {
-      "desc" => :desc,
-      "asc" => :asc,
-    }
-
     sort_key = sort_key_mapper[params["sort_key"] || "date"]
-    sort_order = sort_order_mapper[params["sort_order"] || "desc"]
 
-    if sort_key && sort_order
-      sort_criteria = [[:pinned, :desc], [sort_key, sort_order]]
+    if sort_key
+      # only sort order of :desc is supported.  support for :asc would require new indices.
+      sort_criteria = [[:pinned, :desc], [sort_key, :desc]]
       if ![:created_at, :last_activity_at].include? sort_key
         sort_criteria << [:created_at, :desc]
       end
@@ -365,7 +358,6 @@ helpers do
     end
 
     notification_map.to_json
-
   end
 
   def filter_blocked_content body
@@ -390,5 +382,4 @@ helpers do
   add_method_tracer :flag_as_abuse
   add_method_tracer :un_flag_as_abuse
   add_method_tracer :handle_threads_query
-
 end

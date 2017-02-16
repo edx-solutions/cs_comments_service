@@ -214,11 +214,11 @@ def check_thread_result(user, thread, hash, is_json=false)
       read_date = read_states.first.last_read_times[thread.id.to_s]
       if read_date
         thread.comments.each do |c|
-          if c.updated_at < read_date
+          if c.created_at < read_date
             expected_unread_cnt -= 1
           end
         end
-        hash["read"].should == (read_date >= thread.updated_at)
+        hash["read"].should == (read_date >= thread.last_activity_at)
       else
         hash["read"].should == false
       end
@@ -265,6 +265,10 @@ end
 
 
 def check_discussion_response_paging(thread, hash, resp_skip=0, resp_limit=nil, is_json=false, recursive=false)
+  if resp_limit.nil?
+    resp_limit = CommentService.config["thread_response_default_size"]
+  end
+
   all_responses = thread.root_comments.sort({"sk" => 1}).to_a
   total_responses = all_responses.length
   hash["resp_total"].should == total_responses
@@ -277,11 +281,7 @@ def check_discussion_response_paging(thread, hash, resp_skip=0, resp_limit=nil, 
     check_comment(expected_responses[i], response_hash, is_json, recursive)
   end
   hash["resp_skip"].to_i.should == resp_skip
-  if resp_limit.nil?
-    hash["resp_limit"].should be_nil
-  else
-    hash["resp_limit"].to_i.should == resp_limit
-  end
+  hash["resp_limit"].to_i.should == resp_limit
 end
 
 def check_question_response_paging(thread, hash, resp_skip=0, resp_limit=nil, is_json=false, recursive=false)
@@ -342,6 +342,17 @@ def make_comment(author, parent, text)
   comment
 end
 
+def make_standalone_thread(author)
+  make_thread(
+      author,
+      "standalone thread 0",
+      DFLT_COURSE_ID,
+      "pdq",
+      :discussion,
+      :standalone
+  )
+end
+
 # add standalone threads and comments to the @threads and @comments hashes
 # using the namespace "standalone t#{index}" for threads and "standalone t#{index} c#{i}" for comments
 # takes an index param if used within an iterator, otherwise will namespace using 0 for thread index
@@ -397,4 +408,12 @@ def create_comment_thread_and_comments
   comment.set(child_count: 1)
 
   thread
+end
+
+def test_thread_marked_as_read(thread_id, user_id)
+  # get thread to assert its "read" status
+  get "/api/v1/threads/#{thread_id}", user_id: user_id
+  last_response.should be_ok
+  retrieved_thread = parse last_response.body
+  retrieved_thread["read"].should == true
 end

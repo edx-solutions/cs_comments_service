@@ -1,6 +1,6 @@
-get "#{APIPREFIX}/threads" do # retrieve threads by course
 
-  threads = Content.where({"_type" => "CommentThread", "course_id" => params["course_id"]})
+get "#{APIPREFIX}/threads" do # retrieve threads by course
+  threads = CommentThread.where({"course_id" => params["course_id"]})
   if params[:commentable_ids]
     threads = threads.in({"commentable_id" => params[:commentable_ids].split(",")})
   end
@@ -25,7 +25,6 @@ get "#{APIPREFIX}/threads" do # retrieve threads by course
     value_to_boolean(params["unread"]),
     value_to_boolean(params["unanswered"]),
     params["sort_key"],
-    params["sort_order"],
     params["page"],
     params["per_page"]
   ).to_json
@@ -59,9 +58,13 @@ get "#{APIPREFIX}/threads/:thread_id" do |thread_id|
       error 400, [t(:param_must_be_a_number_greater_than_zero, :param => 'resp_limit')].to_json
     end
   else
-    resp_limit = nil
+    resp_limit = CommentService.config["thread_response_default_size"]
   end
-  presenter.to_hash(true, resp_skip, resp_limit, bool_recursive).to_json
+  size_limit = CommentService.config["thread_response_size_limit"]
+  unless (resp_limit <= size_limit)
+    error 400, [t(:param_exceeds_limit, :param => resp_limit, :limit => size_limit)].to_json
+  end
+  presenter.to_hash(bool_with_responses, resp_skip, resp_limit, bool_recursive).to_json
 end
 
 put "#{APIPREFIX}/threads/:thread_id" do |thread_id|
@@ -89,6 +92,8 @@ post "#{APIPREFIX}/threads/:thread_id/comments" do |thread_id|
     error 400, comment.errors.full_messages.to_json
   else
     user.subscribe(thread) if bool_auto_subscribe
+    # Mark thread as read for owner user on comment creation
+    user.mark_as_read(thread)
     comment.to_hash.to_json
   end
 end
