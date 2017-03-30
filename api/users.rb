@@ -93,7 +93,6 @@ def _user_social_stats(user_id, params)
 
     course_id = params["course_id"]
     thread_ids_filter = params["thread_ids"].split(",") if params["thread_ids"]
-    user_ids = params["user_ids"]
 
     user_stats = {}
     thread_ids = {}
@@ -102,10 +101,6 @@ def _user_social_stats(user_id, params)
     content_selector = {course_id: course_id, anonymous: false, anonymous_to_peers: false}
     if end_date
       content_selector[:created_at.lte] = end_date
-    end
-
-    if user_ids
-        content_selector[:author_id.in] = user_ids
     end
 
     def set_template_result(user_id, user_stats, thread_ids)
@@ -185,12 +180,7 @@ def _user_social_stats(user_id, params)
     end
 
     # Get the number of threads read by each user.
-    users_read_states_selector = {"read_states.course_id" => course_id}
-    if user_ids
-        users_read_states_selector[:_id.in] = user_ids
-    end
-
-    users = User.only([:_id, :read_states]).where(users_read_states_selector)
+    users = User.only([:_id, :read_states]).where("read_states.course_id" => course_id)
     users.each do |user|
       if user_stats.key?(user._id) == false then
         set_template_result(user._id, user_stats, thread_ids)
