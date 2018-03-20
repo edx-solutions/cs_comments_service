@@ -198,3 +198,13 @@ post "#{APIPREFIX}/users/:user_id/social_stats" do |user_id|
   _user_social_stats(user_id, params)
 end
 
+post "#{APIPREFIX}/users/:user_id/retire" do |user_id|
+  return {}.to_json if not params["retired_username"]
+  user = User.find_by!(external_id: user_id)
+  user.update_attribute(:email, "")
+  user.update_attribute(:notification_ids, [])
+  user.update_attribute(:read_states, [])
+  user.unsubscribe_all
+  user.retire_all_comments(params["retired_username"])
+  user.update_attribute(:username, params["retired_username"])
+end
