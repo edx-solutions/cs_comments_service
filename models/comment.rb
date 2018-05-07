@@ -1,4 +1,4 @@
-require 'new_relic/agent/method_tracer'
+require_relative 'concerns/searchable'
 require_relative 'content'
 require_relative 'constants'
 
@@ -7,8 +7,7 @@ class Comment < Content
   include Mongoid::Timestamps
   include Mongoid::MagicCounterCache
   include ActiveModel::MassAssignmentSecurity
-  include Tire::Model::Search
-  include Tire::Model::Callbacks
+  include Searchable
 
   voteable self, :up => +1, :down => -1
 
@@ -166,6 +165,11 @@ class Comment < Content
     end
   end
 
-  include ::NewRelic::Agent::MethodTracer
-  add_method_tracer :to_hash
+  begin
+    require 'new_relic/agent/method_tracer'
+    include ::NewRelic::Agent::MethodTracer
+    add_method_tracer :to_hash
+  rescue LoadError
+    logger.warn "NewRelic agent library not installed"
+  end
 end

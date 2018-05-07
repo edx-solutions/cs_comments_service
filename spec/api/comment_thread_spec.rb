@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'unicode_shared_examples'
 
-describe "app" do
-  describe "comment threads" do
+describe 'app' do
+  describe 'comment threads' do
 
     before(:each) { set_api_key_header }
 
@@ -565,6 +565,30 @@ describe "app" do
         changed_thread = CommentThread.find(thread.id)
         check_thread_result_json(user, changed_thread, json_response)
         json_response["read"].should == true
+      end
+
+      # Test active and non active thread count for a course
+      it "test the number of active and non active threads for a course" do
+        User.all.delete
+        Content.all.delete
+        @user = create_test_user(999)
+        @threads = {}
+        5.times do |n|
+          thread_key = "t#{n}"
+          thread = make_thread(@user, thread_key, DFLT_COURSE_ID, "pdq")
+          @threads[n] = thread
+        end
+        time_threshold = 2.day.ago
+        @threads[0].last_activity_at = time_threshold
+        @threads[0].save!
+        @threads[1].last_activity_at = time_threshold
+        @threads[1].save!
+
+        get "/api/v1/courses/#{DFLT_COURSE_ID}/stats"
+        last_response.should be_ok
+        response = parse last_response.body
+        response["num_threads"].should == 5
+        response["num_active_threads"].should == 3
       end
 
       def test_unicode_data(text)
