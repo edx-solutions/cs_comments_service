@@ -67,7 +67,11 @@ get "#{APIPREFIX}/users/:user_id/active_threads" do |user_id|
 end
 
 put "#{APIPREFIX}/users/:user_id" do |user_id|
-  user = User.find_or_create_by(external_id: user_id)
+  begin
+    user = User.find_by(external_id: user_id)
+  rescue Mongoid::Errors::DocumentNotFound
+    user = User.create(:external_id => user_id)
+  end
   user.update_attributes(params.slice(*%w[username default_sort_key]))
   if user.errors.any?
     error 400, user.errors.full_messages.to_json
