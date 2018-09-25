@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby "1.9.3"
+ruby "2.3.0"
 
 gem 'pry'
 gem 'pry-nav'
@@ -16,18 +16,25 @@ gem 'sinatra-param', '~> 1.4'
 
 gem 'yajl-ruby'
 
+gem 'activemodel', '~> 4.2.8'
 
-gem 'mongoid', '~> 5.0.0'
-gem 'bson', '~>3.1'
-gem 'bson_ext'
+gem 'mongoid', '~> 5.4'
+gem 'bson', '~> 4.3'
 gem 'protected_attributes'
 
 gem 'delayed_job'
 gem 'delayed_job_mongoid'
 
 gem "enumerize"
-gem 'mongoid-tree', :git => 'https://github.com/macdiesel/mongoid-tree'
-gem 'rs_voteable_mongo', :git => 'https://github.com/navneet35371/voteable_mongo.git'
+
+# MongoID version is updated to 5.4, for that we have to use latest dependency gems
+# so commented below two gems and used their dependent versions.
+# FIXME: We should remove these commented gems after successful deployment
+#gem 'mongoid-tree', :git => 'https://github.com/macdiesel/mongoid-tree'
+#gem 'rs_voteable_mongo', :git => 'https://github.com/navneet35371/voteable_mongo.git'
+gem 'mongoid-tree'
+gem 'rs_voteable_mongo', '~> 1.1'
+
 gem 'mongoid_magic_counter_cache'
 
 gem 'will_paginate_mongoid', "~>2.0"
