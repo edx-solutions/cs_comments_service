@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby "2.3.0"
+ruby "2.3.7"
 
 gem 'pry'
 gem 'pry-nav'
@@ -9,7 +9,7 @@ gem 'pry-nav'
 
 gem 'bundler'
 
-gem 'rake'
+gem 'rake', '~> 10.4', '>= 10.4.2'
 
 gem 'sinatra'
 gem 'sinatra-param', '~> 1.4'
