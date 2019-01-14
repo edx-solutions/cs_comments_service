@@ -36,6 +36,9 @@ gem 'rs_voteable_mongo', '~> 1.1'
 
 gem 'mongoid_magic_counter_cache'
 
+# Before updating will_paginate version, we need to make sure that property 'total_entries'
+# exists otherwise use updated property name to fetch total collection count on line 228
+# of lib/helpers.rb.
 gem 'will_paginate_mongoid', "~>2.0"
 gem 'rdiscount'
 gem 'nokogiri', "~>1.6.8"
