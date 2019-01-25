@@ -198,3 +198,20 @@ post "#{APIPREFIX}/users/:user_id/social_stats" do |user_id|
   _user_social_stats(user_id, params)
 end
 
+post "#{APIPREFIX}/users/:user_id/retire" do |user_id|
+  if not params["retired_username"]
+    error 500, {message: "Missing retired_username param."}.to_json
+  end
+  begin
+    user = User.find_by(external_id: user_id)
+  rescue Mongoid::Errors::DocumentNotFound
+    error 404, {message: "User not found."}.to_json
+  end
+  user.update_attribute(:email, "")
+  user.update_attribute(:notification_ids, [])
+  user.update_attribute(:read_states, [])
+  user.unsubscribe_all
+  user.retire_all_content(params["retired_username"])
+  user.update_attribute(:username, params["retired_username"])
+  user.save
+end

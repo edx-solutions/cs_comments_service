@@ -120,6 +120,44 @@ describe Comment do
       end
     end
   end
+end
 
+describe 'comment_with_es' do
+  include_context 'search_enabled'
 
+  let(:author) do
+    create_test_user(42)
+  end
+
+  let(:standalone_thread) do
+    make_thread(author, "Test standalone thread", "test_course", "test_commentable", :discussion, :standalone)
+  end
+
+  context 'with search_enabled, updating a comment' do
+    it 'results in ES proxy called' do
+      comment = make_comment(author, standalone_thread, "comment")
+      expect(comment.__elasticsearch__).to receive(:update_document).once.and_call_original
+      comment.update!({body: "changed"})
+    end
+
+    it 'results in ES proxy not called when explicitly disabled' do
+      comment = make_comment(author, standalone_thread, "comment")
+      expect(comment.__elasticsearch__).to_not receive(:update_document).and_call_original
+      comment.without_es do
+        comment.update!({body: "changed"})
+      end
+    end
+
+    it 'leaves the enable_es variable intact despite any errors during update' do
+      comment = make_comment(author, standalone_thread, "comment")
+      expect(comment.__elasticsearch__).to_not receive(:update_document).and_call_original
+      begin
+        comment.without_es do
+          raise  # this line simulates what would happen if the update command threw an exception
+        end
+      rescue
+        expect(comment.es_enabled?).to be(true)
+      end
+    end
+  end
 end

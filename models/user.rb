@@ -22,6 +22,9 @@ class User
 
   index( {external_id: 1}, {unique: true, background: true} )
 
+  logger = Logger.new(STDOUT)
+  logger.level = Logger::WARN
+
   def subscriptions_as_source
     Subscription.where(source_id: id.to_s, source_type: self.class.to_s)
   end
@@ -131,6 +134,70 @@ class User
     subscription = Subscription.where(subscriber_id: self._id.to_s, source_id: source._id.to_s, source_type: source.class.to_s).first
     subscription.destroy if subscription
     subscription
+  end
+
+  def unsubscribe_all
+    # Unsubscribe this user from all their subscribed threads across all courses.
+    sub_threads = subscribed_threads
+    sub_threads.each {|sub_id| unsubscribe(sub_id) }
+  end
+
+  def all_comments
+    # Returns all comments authored by this user.
+    user_comments = Comment.where(author_id: self._id.to_s)
+    user_comments
+  end
+
+  def all_comment_threads
+    # Returns all comment threads authored by this user.
+    user_comment_threads = CommentThread.where(author_id: self._id.to_s)
+    user_comment_threads
+  end
+
+  def retire_comment(comment, retired_username)
+    # Retire a single comment and return a bulk action for elasticsearch.
+    data = {
+        retired_username: retired_username,
+        body: RETIRED_BODY
+    }
+    if comment._type == "CommentThread"
+      data[:title] = RETIRED_TITLE
+    end
+    comment.without_es do
+      comment.update!(data)
+    end
+    # Craft a bulk action for elasticsearch.  This is a little bit of low-level boilerplate which is
+    # normally handled by the elasticsearch-rails package, but the high-level API bindings don't include
+    # support for bulk requests so we need to do the dirty work ourselves.
+    data[:author_username] = retired_username
+    {
+      update: {
+        _index: Content::ES_INDEX_NAME,
+        _type: comment.__elasticsearch__.document_type,
+        _id: comment._id,
+        data: { doc: data }
+      }
+    }
+  end
+
+  def retire_all_content(retired_username)
+    # Retire all content authored by this user.
+    user_comments = all_comments
+    user_comment_threads = all_comment_threads
+    user_content = all_comments + all_comment_threads
+    # We must avoid sending empty bulk requests, so we wrap the following in a conditional.  Otherwise,
+    # Elasticsearch::Model.client.bulk() will blindly pass along an empty string to the bulk API
+    # endpoint which causes 400s and cryptic error messages.
+    unless user_content.empty?
+      # Retire each comment one at a time, deferring any ES updates.
+      bulk_data = user_content.map {|comment| retire_comment(comment, retired_username)}
+      # Finally, update ES with all the comment changes in one bulk HTTP request.  This is a bit of a time
+      # bomb since it might cause the request payload to blow up for that one user with 100k forum posts,
+      # but the failure mode before bulking was undeniably worse so at least we're making progress.  ES
+      # docs claim that a 10MB payload is a good starting point for a bulk request, which for our use case
+      # means blanking out about 36k forum posts.  That's a lot of flame wars for one user!
+      Elasticsearch::Model.client.bulk(body: bulk_data)
+    end
   end
 
   def mark_as_read(thread)
