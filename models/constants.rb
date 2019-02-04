@@ -29,5 +29,5 @@ EXTERNAL_ID = "external_id".freeze
 COMMENT = "comment".freeze
 THREAD = "thread".freeze
 
-RETIRED_TITLE = "[deleted]".freeze
-RETIRED_BODY = "[deleted]".freeze
+RETIRED_TITLE = "Deleted message".freeze
+RETIRED_BODY = "Deleted message".freeze
