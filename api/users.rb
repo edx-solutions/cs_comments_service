@@ -205,7 +205,7 @@ post "#{APIPREFIX}/users/:user_id/retire" do |user_id|
   begin
     user = User.find_by(external_id: user_id)
   rescue Mongoid::Errors::DocumentNotFound
-    error 404, {message: "User not found."}.to_json
+    return {message: "User not found."}.to_json
   end
   user.update_attribute(:email, "")
   user.update_attribute(:notification_ids, [])
