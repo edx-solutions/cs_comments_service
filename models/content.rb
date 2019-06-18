@@ -9,6 +9,8 @@ class Content
   field :abuse_flaggers, type: Array, default: []
   field :historical_abuse_flaggers, type: Array, default: [] #preserve abuse flaggers after a moderator unflags
   field :author_username, type: String, default: nil
+  field :author_first_name, type: String, default: nil
+  field :author_last_name, type: String, default: nil
 
   index({_type: 1, course_id: 1, pinned: -1, created_at: -1}, {background: true})
   index({_type: 1, course_id: 1, pinned: -1, comment_count: -1, created_at: -1}, {background: true})
@@ -63,7 +65,7 @@ class Content
 
   def self.summary what
     #take a hash of criteria (what) and return a hash of hashes
-    #of total users, votes, comments, endorsements,
+    #of total users, votes, comments, endorsements, 
 
     answer = {}
     vote_count = 0
@@ -102,5 +104,8 @@ class Content
   def set_username
     # avoid having to look this attribute up later, since it does not change
     self.author_username = self.retired_username ? self.retired_username : author.username
+    self.author_first_name = author.first_name
+    self.author_last_name = author.last_name
+
   end
 end

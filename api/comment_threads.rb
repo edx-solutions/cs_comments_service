@@ -40,7 +40,7 @@ get "#{APIPREFIX}/threads/:thread_id" do |thread_id|
 
   # user is required to return user-specific fields, such as "read" (even if bool_mark_as_read is False)
   if params["user_id"]
-    user = User.only([:id, :username, :read_states]).find_by(external_id: params["user_id"])
+    user = User.only([:id, :username, :first_name, :last_name, :read_states]).find_by(external_id: params["user_id"])
   end
   if user and bool_mark_as_read
     user.mark_as_read(thread)
@@ -70,7 +70,7 @@ end
 
 put "#{APIPREFIX}/threads/:thread_id" do |thread_id|
   filter_blocked_content params["body"]
-  thread.update_attributes(params.slice(*%w[title body pinned closed commentable_id group_id thread_type]))
+  thread.update_attributes(params.slice(*%w[title body pinned closed commentable_id group_id thread_type first_name last_name]))
 
   if thread.errors.any?
     error 400, thread.errors.full_messages.to_json
