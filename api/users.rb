@@ -4,6 +4,8 @@ require 'date'
 post "#{APIPREFIX}/users" do
   user = User.new(external_id: params["id"])
   user.username = params["username"]
+  user.first_name = params["first_name"]
+  user.last_name = params["last_name"]
   user.save
   if user.errors.any?
     error 400, user.errors.full_messages.to_json
@@ -68,7 +70,7 @@ end
 
 put "#{APIPREFIX}/users/:user_id" do |user_id|
   user = User.find_or_create_by(external_id: user_id)
-  user.update_attributes(params.slice(*%w[username default_sort_key]))
+  user.update_attributes(params.slice(*%w[username default_sort_key first_name last_name]))
   if user.errors.any?
     error 400, user.errors.full_messages.to_json
   else

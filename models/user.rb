@@ -7,6 +7,8 @@ class User
   field :_id, type: String, default: -> { external_id }
   field :external_id, type: String
   field :username, type: String
+  field :first_name, type: String
+  field :last_name, type: String
   field :default_sort_key, type: String, default: "date"
 
   embeds_many :read_states
@@ -39,7 +41,7 @@ class User
 
   def to_hash(params={})
     hash = as_document
-      .slice(USERNAME, EXTERNAL_ID)
+      .slice(USERNAME, EXTERNAL_ID, FIRST_NAME, LAST_NAME)
 
     if params[:complete]
       hash = hash.merge!("subscribed_thread_ids" => subscribed_thread_ids,
