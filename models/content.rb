@@ -65,7 +65,7 @@ class Content
 
   def self.summary what
     #take a hash of criteria (what) and return a hash of hashes
-    #of total users, votes, comments, endorsements, 
+    #of total users, votes, comments, endorsements,
 
     answer = {}
     vote_count = 0
