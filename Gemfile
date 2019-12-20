@@ -11,15 +11,15 @@ gem 'bundler'
 
 gem 'rake'
 
-gem 'sinatra'
+gem 'sinatra', '~> 1.4', '>= 1.4.8'
 gem 'sinatra-param', '~> 1.4'
 
 gem 'yajl-ruby', '~> 1.3.1'
 
+gem 'mongo', '~> 2.5', '= 2.5.3'
 gem 'activemodel', '~> 4.2.8'
-
-gem 'mongoid', '~> 5.0.0'
-gem 'bson', '~> 3.1'
+gem 'mongoid', '~> 5.1', '= 5.1.6'
+gem 'bson', '~> 4.3'
 gem 'bson_ext'
 gem 'protected_attributes'
 
@@ -74,4 +74,3 @@ gem 'unicorn'
 gem "rack-timeout"
 gem "i18n"
 gem "rack-contrib", :git => 'https://github.com/rack/rack-contrib.git', :ref => '6ff3ca2b2d988911ca52a2712f6a7da5e064aa27'
-
