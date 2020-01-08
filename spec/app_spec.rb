@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'app' do
+  before(:each) { User.delete_all }
+
   describe 'access control' do
     let(:user) { create_test_user(42) }
     # all routes (even nonexistent ones) are covered by the api key
@@ -141,6 +143,8 @@ describe 'app' do
       get '/selftest', {}, {'HTTP_X_EDX_API_KEY' => TEST_API_KEY}
       parse(last_response.body)
     end
+
+    before(:each) { Content.delete_all }
 
     it 'returns valid JSON on success' do
       expect(subject).to include('db', 'es', 'total_posts', 'total_users', 'last_post_created', 'elapsed_time')

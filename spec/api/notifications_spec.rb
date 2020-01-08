@@ -4,6 +4,7 @@ describe "app" do
   describe "notifications" do
 
     before(:each) do
+      User.delete_all
       init_without_subscriptions
       set_api_key_header
     end
