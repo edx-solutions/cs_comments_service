@@ -10,6 +10,8 @@ FactoryGirl.define do
     initialize_with { new(attributes) }
 
     sequence(:username) { |n| "#{Faker::Internet.user_name}_#{n}" }
+    sequence(:first_name) { |n| "#{Faker::Name.first_name}_#{n}" }
+    sequence(:last_name) { |n| "#{Faker::Name.last_name}_#{n}" }
     sequence(:external_id) { username }
   end
 

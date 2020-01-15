@@ -2,6 +2,9 @@ require 'spec_helper'
 require 'unicode_shared_examples'
 
 describe Comment do
+
+  before(:each) { User.delete_all }
+
   let(:author) do
     create_test_user(42)
   end
@@ -124,6 +127,8 @@ end
 
 describe 'comment_with_es' do
   include_context 'search_enabled'
+
+  before(:each) { User.delete_all }
 
   let(:author) do
     create_test_user(42)

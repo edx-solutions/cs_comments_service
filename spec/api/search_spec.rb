@@ -5,7 +5,10 @@ describe 'app' do
   describe 'search' do
     include_context 'search_enabled'
 
-    before (:each) { set_api_key_header }
+    before (:each) do
+        User.delete_all
+        set_api_key_header
+    end
     let(:author) { create(:user) }
     let(:course_id) { 'test/course/id' }
 
@@ -199,7 +202,7 @@ describe 'app' do
         end
 
         it "with exclude_groups" do
-          get "/api/v1/search/threads", text: "text", exclude_groups: "true"
+          get "/api/v1/search/threads", text: "text", exclude_groups: "true", group_id: "0"
           expected_ids = (0..29).find_all {|i| i % 5 == 0}
           assert_response_contains(expected_ids)
         end

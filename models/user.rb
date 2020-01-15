@@ -2,6 +2,7 @@ require 'logger'
 require_relative 'constants'
 
 class User
+  include Mongoid::Attributes::Dynamic
   include Mongoid::Document
   include Mongo::Voter
 

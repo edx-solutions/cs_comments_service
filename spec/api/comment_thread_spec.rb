@@ -4,7 +4,11 @@ require 'unicode_shared_examples'
 describe 'app' do
   describe 'comment threads' do
 
-    before(:each) { set_api_key_header }
+    before(:each) do
+        User.delete_all
+        Content.delete_all
+        set_api_key_header
+    end
 
     describe "GET /api/v1/threads" do
 
@@ -534,8 +538,6 @@ describe 'app' do
 
       # Test active and non active thread count for a course
       it "test the number of active and non active threads for a course" do
-        User.all.delete
-        Content.all.delete
         @user = create_test_user(999)
         @threads = {}
         5.times do |n|
@@ -569,8 +571,6 @@ describe 'app' do
 
       # Test active and non active thread count for a course
       it "test the number of active and non active threads for a course" do
-        User.all.delete
-        Content.all.delete
         @user = create_test_user(999)
         @threads = {}
         5.times do |n|
@@ -618,8 +618,6 @@ describe 'app' do
 
       context "response pagination" do
         before(:each) do
-          User.all.delete
-          Content.all.delete
           @user = create_test_user(999)
           @threads = {}
           @comments = {}

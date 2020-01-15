@@ -3,7 +3,11 @@ require 'unicode_shared_examples'
 
 describe 'app' do
   describe 'commentables' do
-    before(:each) { set_api_key_header }
+    before(:each) do
+        User.delete_all
+        Content.delete_all
+        set_api_key_header
+    end
     let(:commentable_id) { Faker::Lorem.word }
 
     describe 'DELETE /api/v1/:commentable_id/threads' do

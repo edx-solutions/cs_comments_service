@@ -47,6 +47,9 @@ describe "app" do
     end
 
     describe "GET /api/v1/users/:user_id" do
+
+      before(:each) { Content.delete_all }
+
       let(:author) { User.find_by(external_id: "1") }
       let(:reader) { User.find_by(external_id: "2") }
       let(:thread) { make_standalone_thread(author) }
