@@ -33,7 +33,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    bson (4.3.0)
+    bson (4.8.2)
     bson_ext (1.5.1)
     builder (3.2.4)
     codecov (0.1.16)
@@ -180,7 +180,6 @@ GEM
     shellany (0.0.1)
     simplecov (0.17.1)
       docile (~> 1.1)
-      json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
     sinatra (1.4.8)
@@ -216,7 +215,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemodel (~> 4.2.8)
-  bson (= 4.3.0)
+  bson
   bson_ext
   bundler
   codecov
