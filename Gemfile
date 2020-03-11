@@ -65,7 +65,7 @@ group :test do
 end
 
 group 'newrelic_rpm' do
-  gem 'newrelic_rpm'
+  gem 'newrelic_rpm', '~> 3.16.0'
 end
 
 gem 'unicorn'
