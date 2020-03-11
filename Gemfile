@@ -16,10 +16,10 @@ gem 'sinatra-param', '~> 1.4'
 
 gem 'yajl-ruby', '~> 1.3.1'
 
-gem 'mongo', '~> 2.5', '= 2.5.3'
+gem 'mongo', '~> 2.3', '= 2.3.1'
 gem 'activemodel', '~> 4.2.8'
 gem 'mongoid', '~> 5.0.0'
-gem 'bson', '~> 4.3'
+gem 'bson', '~> 4.3', '= 4.3.0'
 gem 'bson_ext'
 gem 'protected_attributes'
 

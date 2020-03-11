@@ -33,7 +33,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    bson (4.7.0)
+    bson (4.3.0)
     bson_ext (1.5.1)
     builder (3.2.4)
     codecov (0.1.16)
@@ -107,8 +107,8 @@ GEM
     mime-types-data (3.2019.1009)
     mini_portile2 (2.3.0)
     minitest (5.13.0)
-    mongo (2.5.3)
-      bson (>= 4.3.0, < 5.0.0)
+    mongo (2.3.1)
+      bson (~> 4.1)
     mongoid (5.0.0)
       activemodel (~> 4.0)
       mongo (~> 2.1)
@@ -216,7 +216,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemodel (~> 4.2.8)
-  bson (~> 4.3)
+  bson (~> 4.3, = 4.3.0)
   bson_ext
   bundler
   codecov
@@ -231,7 +231,7 @@ DEPENDENCIES
   guard
   guard-unicorn
   i18n
-  mongo (~> 2.5, = 2.5.3)
+  mongo (~> 2.3, = 2.3.1)
   mongoid (~> 5.0.0)
   mongoid-tree!
   mongoid_cleaner (~> 1.2.0)
