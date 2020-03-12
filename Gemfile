@@ -18,6 +18,7 @@ gem 'yajl-ruby', '~> 1.3.1'
 
 gem 'mongo', '~> 2.3', '= 2.3.1'
 gem 'activemodel', '~> 4.2.8'
+
 gem 'mongoid', '~> 5.0.0'
 gem 'bson', '~> 4.3', '= 4.3.0'
 gem 'bson_ext'
@@ -27,13 +28,8 @@ gem 'delayed_job'
 gem 'delayed_job_mongoid'
 
 gem "enumerize"
-
-# MongoID version is updated to 5.4, for that we have to use latest dependency gems
-# so commented below two gems and used their dependent versions.
-# FIXME: We should remove these commented gems after successful deployment
 gem 'mongoid-tree', :git => 'https://github.com/macdiesel/mongoid-tree'
 gem 'rs_voteable_mongo', :git => 'https://github.com/navneet35371/voteable_mongo.git'
-
 gem 'mongoid_magic_counter_cache'
 
 # Before updating will_paginate version, we need to make sure that property 'total_entries'
