@@ -2,6 +2,9 @@ require 'spec_helper'
 require 'unicode_shared_examples'
 
 describe Comment do
+
+  before(:each) { User.delete_all }
+
   let(:author) do
     create_test_user(42)
   end
@@ -50,14 +53,14 @@ describe Comment do
     context 'with standalone_thread' do
       it 'returns false' do
         comment = make_comment(author, standalone_thread, "comment")
-        expect(comment.course_context?).to be_false
+        expect(comment.course_context?).to be false
       end
     end
 
     context 'with course_thread' do
       it 'returns true' do
         comment = make_comment(author, course_thread, "comment")
-        expect(comment.course_context?).to be_true
+        expect(comment.course_context?).to be true
       end
     end
 
@@ -65,7 +68,7 @@ describe Comment do
       it 'returns false' do
         comment = make_comment(author, course_thread, "comment")
         comment.comment_thread_id = 'not a thread'
-        expect(comment.course_context?).to be_false
+        expect(comment.course_context?).to be false
       end
     end
   end
@@ -74,14 +77,14 @@ describe Comment do
     context 'with standalone_thread' do
       it 'returns true' do
         comment = make_comment(author, standalone_thread, "comment")
-        expect(comment.standalone_context?).to be_true
+        expect(comment.standalone_context?).to be true
       end
     end
 
     context 'with course_thread' do
       it 'returns false' do
         comment = make_comment(author, course_thread, "comment")
-        expect(comment.standalone_context?).to be_false
+        expect(comment.standalone_context?).to be false
       end
     end
 
@@ -89,7 +92,7 @@ describe Comment do
       it 'returns false' do
         comment = make_comment(author, course_thread, "comment")
         comment.comment_thread_id = 'not a thread'
-        expect(comment.standalone_context?).to be_false
+        expect(comment.standalone_context?).to be false
       end
     end
 
@@ -124,6 +127,8 @@ end
 
 describe 'comment_with_es' do
   include_context 'search_enabled'
+
+  before(:each) { User.delete_all }
 
   let(:author) do
     create_test_user(42)

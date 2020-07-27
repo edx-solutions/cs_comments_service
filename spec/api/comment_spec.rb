@@ -4,7 +4,12 @@ require 'unicode_shared_examples'
 BLOCKED_BODY = 'BLOCKED POST'
 
 describe 'Comment API' do
-  before(:each) { set_api_key_header }
+  before(:each) do
+    User.delete_all
+    Content.delete_all
+    set_api_key_header
+  end
+
   let(:thread) { create_comment_thread_and_comments }
 
   describe 'GET /api/v1/comments/:comment_id' do
@@ -12,7 +17,7 @@ describe 'Comment API' do
       comment = thread.comments.first
       get "/api/v1/comments/#{comment.id}"
       last_response.should be_ok
-      last_response.content_type.should == 'application/json;charset=utf-8'
+      last_response.content_type.should == 'application/json'
     end
 
     it 'retrieves information of a single comment' do

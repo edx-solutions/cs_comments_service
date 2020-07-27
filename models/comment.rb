@@ -1,6 +1,10 @@
+require 'logger'
 require_relative 'concerns/searchable'
 require_relative 'content'
 require_relative 'constants'
+
+logger = Logger.new(STDOUT)
+logger.level = Logger::WARN
 
 class Comment < Content
   include Mongoid::Tree
@@ -95,8 +99,8 @@ class Comment < Content
         .merge!("id" => _id,
                 "user_id" => author_id,
                 "username" => author_username,
-                "first_name" => author.first_name,
-                "last_name" => author.last_name,
+                "first_name" =>  author.nil? ? nil : author.first_name,
+                "last_name" => author.nil? ? nil : author.last_name,
                 "depth" => depth,
                 "closed" => comment_thread.nil? ? false : comment_thread.closed,
                 "thread_id" => comment_thread_id,

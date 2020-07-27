@@ -1,6 +1,11 @@
+require 'logger'
 require_relative 'concerns/searchable'
 require_relative 'content'
 require_relative 'constants'
+
+logger = Logger.new(STDOUT)
+logger.level = Logger::WARN
+
 
 class CommentThread < Content
   include Mongoid::Timestamps
@@ -122,8 +127,8 @@ class CommentThread < Content
       .merge!("id" => _id,
               "user_id" => author_id,
               "username" => author_username,
-              "first_name" => author.first_name,
-              "last_name" => author.last_name,
+              "first_name" => author.nil? ? nil : author.first_name,
+              "last_name" => author.nil? ? nil : author.last_name,
               "votes" => votes.slice(COUNT, UP_COUNT, DOWN_COUNT, POINT),
               "abuse_flaggers" => abuse_flaggers,
               "tags" => [],

@@ -4,7 +4,7 @@ namespace :db do
   FactoryGirl.find_definitions
 
   def create_test_user(id)
-    User.create!(external_id: id, username: "user#{id}")
+    User.create!(external_id: id, username: "user#{id}", first_name: "first_name#{id}", last_name: "last_name#{id}")
   end
 
   task :init => :environment do

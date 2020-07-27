@@ -32,3 +32,5 @@ log/
 .idea/
 /nbproject
 .idea/
+
+.ruby-version

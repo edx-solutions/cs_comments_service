@@ -3,7 +3,11 @@ require 'unicode_shared_examples'
 
 describe 'app' do
   describe 'commentables' do
-    before(:each) { set_api_key_header }
+    before(:each) do
+        User.delete_all
+        Content.delete_all
+        set_api_key_header
+    end
     let(:commentable_id) { Faker::Lorem.word }
 
     describe 'DELETE /api/v1/:commentable_id/threads' do
@@ -166,7 +170,7 @@ describe 'app' do
 
         thread = CommentThread.find(body['id'])
         expect(thread).to_not be_nil
-        expect(thread['anonymous']).to be_true
+        expect(thread['anonymous']).to be true
       end
 
       it 'returns error when title, body or course id does not exist' do

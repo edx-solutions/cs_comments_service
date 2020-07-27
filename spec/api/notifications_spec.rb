@@ -4,6 +4,7 @@ describe "app" do
   describe "notifications" do
 
     before(:each) do
+      User.delete_all
       init_without_subscriptions
       set_api_key_header
     end
@@ -82,7 +83,7 @@ describe "app" do
 
       it "does not contain cohort group_id if not defined" do
         thread_notification = get_thread_notification("dummy comment content")
-        thread_notification.has_key?("group_id").should be_false
+        thread_notification.has_key?("group_id").should be false
       end
 
       it "returns only threads subscribed to by user" do

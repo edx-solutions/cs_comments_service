@@ -4,7 +4,11 @@ require 'unicode_shared_examples'
 describe 'app' do
   describe 'comment threads' do
 
-    before(:each) { set_api_key_header }
+    before(:each) do
+        User.delete_all
+        Content.delete_all
+        set_api_key_header
+    end
 
     describe "GET /api/v1/threads" do
 
@@ -443,7 +447,7 @@ describe 'app' do
       it { should be_ok }
 
       it 'returns JSON' do
-        expect(subject.content_type).to eq 'application/json;charset=utf-8'
+        expect(subject.content_type).to eq 'application/json'
       end
 
       it 'get information of a single comment thread' do
@@ -534,8 +538,6 @@ describe 'app' do
 
       # Test active and non active thread count for a course
       it "test the number of active and non active threads for a course" do
-        User.all.delete
-        Content.all.delete
         @user = create_test_user(999)
         @threads = {}
         5.times do |n|
@@ -569,8 +571,6 @@ describe 'app' do
 
       # Test active and non active thread count for a course
       it "test the number of active and non active threads for a course" do
-        User.all.delete
-        Content.all.delete
         @user = create_test_user(999)
         @threads = {}
         5.times do |n|
@@ -618,8 +618,6 @@ describe 'app' do
 
       context "response pagination" do
         before(:each) do
-          User.all.delete
-          Content.all.delete
           @user = create_test_user(999)
           @threads = {}
           @comments = {}
@@ -760,7 +758,7 @@ describe 'app' do
         changed_thread.comment_count.should == orig_count + 1
         comment = changed_thread.comments.select { |c| c["body"] == "new comment" }.first
         comment.should_not be_nil
-        comment.anonymous.should be_true
+        comment.anonymous.should be true
       end
       it "returns 400 when the thread does not exist" do
         post "/api/v1/threads/does_not_exist/comments", default_params

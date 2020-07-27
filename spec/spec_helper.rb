@@ -10,6 +10,8 @@ end
 require File.join(File.dirname(__FILE__), '..', 'app')
 
 require 'rack/test'
+require 'rspec/its'
+require 'rspec/collection_matchers'
 require 'sinatra'
 require 'yajl'
 
@@ -61,7 +63,7 @@ def parse(text)
 end
 
 def create_test_user(id)
-  User.create!(external_id: id.to_s, username: "user#{id}")
+  User.create!(external_id: id.to_s, username: "user#{id}", first_name: "first_name#{id}", last_name: "last_name#{id}")
 end
 
 # Add the given body of text to the list of blocked texts/hashes.
@@ -166,7 +168,7 @@ end
 def check_thread_result(user, thread, hash, is_json=false)
   expected_keys = %w(id thread_type title body course_id commentable_id created_at updated_at context)
   expected_keys += %w(anonymous anonymous_to_peers at_position_list closed user_id)
-  expected_keys += %w(username votes abuse_flaggers tags type group_id pinned)
+  expected_keys += %w(username first_name last_name votes abuse_flaggers tags type group_id pinned)
   expected_keys += %w(comments_count unread_comments_count read endorsed last_activity_at)
   # these keys are checked separately, when desired, using check_thread_response_paging.
   actual_keys = hash.keys - [
@@ -185,6 +187,8 @@ def check_thread_result(user, thread, hash, is_json=false)
   hash["closed"].should == thread.closed
   hash["user_id"].should == thread.author.id
   hash["username"].should == thread.author.username
+  hash["first_name"].should == thread.author.first_name
+  hash["last_name"].should == thread.author.last_name
   hash["votes"]["point"].should == thread.votes["point"]
   hash["votes"]["count"].should == thread.votes["count"]
   hash["votes"]["up_count"].should == thread.votes["up_count"]
@@ -256,6 +260,8 @@ def check_comment(comment, hash, is_json, recursive=false)
   hash["body"].should == comment.body
   hash["user_id"].should == comment.author_id
   hash["username"].should == comment.author_username
+  hash["first_name"].should == comment.author.first_name
+  hash["last_name"].should == comment.author.last_name
   hash["endorsed"].should == comment.endorsed
   hash["endorsement"].should == comment.endorsement
   children = Comment.where({"parent_id" => comment.id}).sort({"sk" => 1}).to_a
@@ -361,7 +367,7 @@ end
 # add standalone threads and comments to the @threads and @comments hashes
 # using the namespace "standalone t#{index}" for threads and "standalone t#{index} c#{i}" for comments
 # takes an index param if used within an iterator, otherwise will namespace using 0 for thread index
-# AKA this will overwrite "standalone t0" each time it is called. 
+# AKA this will overwrite "standalone t0" each time it is called.
 def make_standalone_thread_with_comments(author, index=0)
   thread = make_thread(
       author,
