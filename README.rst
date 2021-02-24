@@ -1,3 +1,6 @@
+Notice: This repo will be archived in April 2021.
+#######
+
 Part of `edX code`__.
 
 __ http://code.edx.org/
