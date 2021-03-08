@@ -2,13 +2,13 @@ require 'logger'
 require_relative 'constants'
 
 class User
-  include Mongoid::Attributes::Dynamic
   include Mongoid::Document
   include Mongo::Voter
 
   field :_id, type: String, default: -> { external_id }
   field :external_id, type: String
   field :username, type: String
+  field :email, type: String
   field :first_name, type: String
   field :last_name, type: String
   field :email, type: String
