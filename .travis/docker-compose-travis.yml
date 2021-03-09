@@ -6,7 +6,7 @@ services:
     image: elasticsearch:1.5.2
     container_name: "es.edx"
   mongo:
-    image: mongo:3.6.21
+    image: mongo:3.2.21
     container_name: "mongo.edx"
   forum-base:
     image: edxops/forum:ruby257 # TODO: switch back to latest after configuration release
